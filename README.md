@@ -117,3 +117,7 @@ All output figures are written to `manuscript/figures/`.
 
 <img src="manuscript/figures/Skills_plot_only.png" width="50%" />
 <img src="manuscript/figures/Skills_legend.png" width="50%" />
+
+## Funding
+
+This work was supported by the European Commission under the Horizon 2020 framework program for Research and Innovation via the APRIL project (project number: 870142) and by the Vibro-Sense Project (project number: 03DPS1242A) funded by the Bundesministerium Forschung, Technologie und Raumfahrt (BMFTR) under the DATIpilot program. This work was partially supported by the German Federal Ministry of Research, Technology and Space (BMFTR) under the Robotics Institute Germany (RIG). Open Access funding provided by the Projekt DEAL (Open access agreement for Germany).
