@@ -2,7 +2,9 @@
 
 Analysis code for the systematic literature review in:
 
-> [Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands](https://arxiv.org/abs/2508.05415)
+> Alexander Fabisch, Wadhah Zai El Amri, Chandandeep Singh, Nicolás Navarro-Guerrero (2026).
+> Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands.
+> https://arxiv.org/abs/2508.05415
 
 Abstract:
 
@@ -11,6 +13,20 @@ Abstract:
 > Although complex five-fingered hands are often considered the ultimate goal for robotic manipulators, they are not necessary for all tasks. We find that in-hand manipulation does not benefit from anthropomorphic hand design as simpler mechanisms are sufficient, but mechanism complexity correlates with the breadth of manipulation tasks a hand can perform. Sensor integration and intelligent manipulation strategies remain underexplored, which may be because of a misalignment with hand design: instead of replicating the number of fingers and degrees of freedom, focusing on robustness and softness would allow more intelligent control and learning to exploit environmental contacts and integrate more sensors. Finally, we argue for standardized evaluation criteria to enable systematic comparison of hand designs and manipulation systems.
 
 <img src="DFKI_RIC_RGB.jpg" width="200px" />
+
+Bibtex entry:
+
+```bibtex
+@misc{fabisch2026robotsreallyneedanthropomorphic,
+      title={Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands},
+      author={Alexander Fabisch and Wadhah Zai El Amri and Chandandeep Singh and Nicolás Navarro-Guerrero},
+      year={2026},
+      eprint={2508.05415},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2508.05415},
+}
+```
 
 ## Repository layout
 
