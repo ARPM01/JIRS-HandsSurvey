@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "This is the code used for the article below."
+title: "Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands"
+url: https://arxiv.org/abs/2508.05415
+doi: 10.48550/arXiv.2508.05415
+preferred-citation:
+    type: article
+    authors:
+    - family-names: Fabisch
+      given-names: Alexander
+      orcid: https://orcid.org/0000-0003-2824-7956
+    - family-names: Zai El Amri
+      given-names: Wadhah
+      orcid: https://orcid.org/0000-0002-0238-4437
+    - family-names: Singh
+      given-names: Chandandeep
+      orcid: https://orcid.org/0000-0003-4100-1002
+    - family-names: Navarro-Guerrero
+      given-names: Nicolás
+      orcid: https://orcid.org/0000-0003-1164-5579
+    title: "Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands"
+    doi: 10.48550/arXiv.2508.05415
+    journal: arXiv
+    start: 1
+    issue: 1
+    volume: 1
+    month: 5
+    year: 2026
+
