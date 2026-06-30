@@ -4,6 +4,12 @@ Analysis code for the systematic literature review in:
 
 > [Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands](https://arxiv.org/abs/2508.05415)
 
+Abstract:
+
+> Human manipulation skills represent a pinnacle of their voluntary motor functions, requiring the coordination of many degrees of freedom and processing of high-dimensional sensor input to achieve remarkable dexterity. Thus, we set out to answer whether the human hand, with its associated biomechanical properties, sensors, and control mechanisms, is an ideal that we should strive for in robotics. Do robots need anthropomorphic hands?
+> We start by extracting characteristics of the human hand in terms of biomechanics and perception to compare them with currently commercially available robotic hands. From this comparison, we derive our research questions that connect manipulation system complexity to skill repertoire size and dexterity. We attempt to answer these with a systematic literature review, in which we analyze the manipulation capabilities demonstrated in 125 papers from 2019-2025.
+> Although complex five-fingered hands are often considered the ultimate goal for robotic manipulators, they are not necessary for all tasks. We find that in-hand manipulation does not benefit from anthropomorphic hand design as simpler mechanisms are sufficient, but mechanism complexity correlates with the breadth of manipulation tasks a hand can perform. Sensor integration and intelligent manipulation strategies remain underexplored, which may be because of a misalignment with hand design: instead of replicating the number of fingers and degrees of freedom, focusing on robustness and softness would allow more intelligent control and learning to exploit environmental contacts and integrate more sensors. Finally, we argue for standardized evaluation criteria to enable systematic comparison of hand designs and manipulation systems.
+
 ## Repository layout
 
 - `data/` — primary dataset and annotation documentation
