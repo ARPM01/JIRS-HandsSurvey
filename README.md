@@ -17,7 +17,7 @@ Abstract:
 Bibtex entry:
 
 ```bibtex
-@misc{fabisch2026robotsreallyneedanthropomorphic,
+@misc{Fabisch2026DoRobotsReally,
       title={Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands},
       author={Alexander Fabisch and Wadhah Zai El Amri and Chandandeep Singh and Nicolás Navarro-Guerrero},
       year={2026},
