@@ -15,14 +15,15 @@ Abstract:
 Bibtex entry:
 
 ```bibtex
-@misc{Fabisch2026DoRobotsReally,
-      title={Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands},
-      author={Alexander Fabisch and Wadhah Zai El Amri and Chandandeep Singh and Nicolás Navarro-Guerrero},
-      year={2026},
-      eprint={2508.05415},
-      archivePrefix={arXiv},
-      primaryClass={cs.RO},
-      url={https://arxiv.org/abs/2508.05415},
+@article{Fabisch2026DoRobotsReally,
+author={Alexander Fabisch and Wadhah Zai El Amri and Chandandeep Singh and Nicolás Navarro-Guerrero},
+title={Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands},
+journal={Journal of Intelligent \& Robotic Systems},
+year={2026},
+volume={112},
+number={3},
+pages={73},
+doi={10.1007/s10846-026-02431-8}
 }
 ```
 
