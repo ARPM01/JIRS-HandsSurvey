@@ -2,9 +2,7 @@
 
 Analysis code for the systematic literature review in:
 
-> Alexander Fabisch, Wadhah Zai El Amri, Chandandeep Singh, Nicolás Navarro-Guerrero (2026).
-> Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands.
-> https://arxiv.org/abs/2508.05415
+> Fabisch, A., Zai El Amri, W., Singh, C. et al. Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands. J Intell Robot Syst 112, 73 (2026). https://doi.org/10.1007/s10846-026-02431-8
 
 Abstract:
 
