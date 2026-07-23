@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "This is the code used for the article below."
 title: "Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands"
-url: https://arxiv.org/abs/2508.05415
-doi: 10.48550/arXiv.2508.05415
+url: https://doi.org/10.1007/s10846-026-02431-8
+doi: 10.1007/s10846-026-02431-8
 preferred-citation:
     type: article
     authors:
@@ -19,11 +19,10 @@ preferred-citation:
       given-names: Nicolás
       orcid: https://orcid.org/0000-0003-1164-5579
     title: "Do Robots Really Need Anthropomorphic Hands? A Comparison of Human and Robotic Hands"
-    doi: 10.48550/arXiv.2508.05415
-    journal: arXiv
-    start: 1
-    issue: 1
-    volume: 1
-    month: 5
+    doi: 10.1007/s10846-026-02431-8
+    journal: Journal of Intelligent & Robotic Systems
+    start: 73
+    issue: 3
+    volume: 112
     year: 2026
 
