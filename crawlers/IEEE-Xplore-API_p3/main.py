@@ -1,58 +1,116 @@
-import xplore
-import ast
-import pandas as pd
-import sys
-import time
+"""Collect IEEE Xplore metadata for the systematic-review search query."""
+
 import json
+from pathlib import Path
 
-file_key = open('key.txt')
-key = file_key.readline()
-file_key.close()
-
-
-query_parameter="('hand' OR 'gripper') AND ('manipulation' OR 'grasping' OR 'grip' OR 'skill')"  
+import xplore
 
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+KEY_PATH = SCRIPT_DIR / "key.txt"
+OUTPUT_DIR = SCRIPT_DIR / "data"
 
-max_results = 200
-query = xplore.XPLORE(key.strip())
-query.booleanText(query_parameter)
-query.resultsFilter("start_year","2019")
-query.maximumResults(max_results)
-start_time = time.time()
-data = query.callAPI()
-resp_time = time.time()
-# save the data to a json file
-with open('data_'+str(0)+'.json', 'w') as f:
-    f.write(data)
+QUERY = "('hand' OR 'gripper') AND ('manipulation' OR 'grasping' OR 'grip' OR 'skill')"
+START_YEAR = "2019"
+END_YEAR = "2025"
+MAX_RESULTS = 200
 
 
-def open_json_file(file_path):
-    with open(file_path, 'r') as f:
-        data = json.load(f)
-    return data
+def read_api_key() -> str:
+    try:
+        api_key = KEY_PATH.read_text(encoding="utf-8").strip()
+    except FileNotFoundError as exc:
+        raise RuntimeError(f"IEEE API key file not found: {KEY_PATH}") from exc
 
-data=open_json_file("data_0.json")
+    if not api_key:
+        raise RuntimeError(f"IEEE API key file is empty: {KEY_PATH}")
+    return api_key
 
 
-# get the total number of results
-data_len = data["total_records"]
+def parse_response(raw_response: str) -> dict:
+    """Validate and decode a raw IEEE API response."""
+    body = raw_response.strip()
 
-print("Total number of results: ", data_len)
+    if "Developer Inactive" in body:
+        raise RuntimeError(
+            "IEEE Xplore rejected the request because the developer account or "
+            "API key is inactive. Sign in at https://developer.ieee.org/, verify "
+            "the account, and confirm that an approved Xplore Metadata API key "
+            "is active under My Account."
+        )
 
-for ind in range(1, int(data_len/max_results)+1):
-    start_id=max_results * ind
-    query = xplore.XPLORE(key.strip())
-    query.booleanText(query_parameter)
-    query.resultsFilter("start_year","2024")
-    #query.resultsFilter("end_year","2019")
-    query.startingResult(start_id)
-    query.maximumResults(max_results)
-    start_time = time.time()
-    data = query.callAPI()
-    resp_time = time.time()
-    # save the data to a json file
-    with open('data_'+str(ind)+'.json', 'w') as f:
-        f.write(data)
+    try:
+        payload = json.loads(body)
+    except json.JSONDecodeError as exc:
+        preview = body[:200] if body else "<empty response>"
+        raise RuntimeError(
+            "IEEE Xplore returned a non-JSON response: " + preview
+        ) from exc
 
-exit()
+    if not isinstance(payload, dict):
+        raise RuntimeError("IEEE Xplore returned JSON with an unexpected structure.")
+
+    if payload.get("error"):
+        raise RuntimeError(f"IEEE Xplore API error: {payload['error']}")
+
+    return payload
+
+
+def fetch_page(api_key: str, start_record: int) -> dict:
+    query = xplore.XPLORE(api_key)
+    query.booleanText(QUERY)
+    query.resultsFilter("start_year", START_YEAR)
+    query.resultsFilter("end_year", END_YEAR)
+    query.resultsSorting("article_number", "asc")
+    query.startingResult(start_record)
+    query.maximumResults(MAX_RESULTS)
+    return parse_response(query.callAPI())
+
+
+def write_page(page_number: int, payload: dict) -> Path:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = OUTPUT_DIR / f"data_{page_number}.json"
+    output_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    return output_path
+
+
+def main() -> None:
+    api_key = read_api_key()
+    start_record = 1
+    page_number = 0
+    total_records = None
+
+    while True:
+        payload = fetch_page(api_key, start_record)
+        output_path = write_page(page_number, payload)
+        articles = payload.get("articles", [])
+
+        if total_records is None:
+            try:
+                total_records = int(payload["total_records"])
+            except (KeyError, TypeError, ValueError) as exc:
+                raise RuntimeError(
+                    "IEEE response does not contain a valid total_records value."
+                ) from exc
+            print(f"Total number of results: {total_records}")
+
+        print(
+            f"Page {page_number}: wrote {len(articles)} records "
+            f"starting at {start_record} to {output_path}"
+        )
+
+        if not articles or start_record + MAX_RESULTS > total_records:
+            break
+
+        # IEEE start_record is a one-based sequence offset. Advance by the
+        # requested page size even when a response contains fewer records;
+        # advancing by len(articles) can overlap the next page.
+        start_record += MAX_RESULTS
+        page_number += 1
+
+
+if __name__ == "__main__":
+    main()
