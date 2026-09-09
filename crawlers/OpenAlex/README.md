@@ -38,10 +38,6 @@ python main.py --set all --max-records-per-query 500 --output-dir runs/final-cap
 
 # Rebuild exports offline.
 python main.py --rebuild runs/final-capped
-
-# Optional topic/background diagnostics.
-python main.py --set 2 --topic S2-04 --pilot
-python main.py --set 1 --context --pilot
 ~~~
 
 ## Limits and progress
@@ -83,14 +79,10 @@ both sets; distinct IDs with a shared DOI are flagged rather than merged.
 There is no union CSV or query-version column.
 
 Edit CORE_QUERIES in queries.py to change the current core searches.
-Diagnostic blocks and HAND are maintained in the same module. Exact query
-snapshots and a fingerprint provide reproducibility and prevent incompatible
+Only these two searches are defined; --set 1 and --set 2 select them individually.
+Exact query snapshots and a fingerprint provide reproducibility and prevent incompatible
 resumes without maintaining a version registry.
 
-Historical run data and [pilot reports](pilot_review/REPORT.md) remain intact
-as research records. Their old versioned commands are historical. Existing
-runs can be rebuilt offline; start a fresh directory for new retrieval after
-this refactor, because the old settings fingerprints differ.
 
 Keep manual screening annotations separately, keyed by OpenAlex ID; rebuilding
 replaces generated paper CSVs and the match table. Review pilot relevance

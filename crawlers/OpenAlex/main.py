@@ -348,8 +348,6 @@ def positive(value):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--set", choices=["all", "1", "2"], default="all")
-    parser.add_argument("--topic", help="Diagnostic block, e.g. S2-03 (HAND still required).")
-    parser.add_argument("--context", action="store_true", help="Set 1 background pilot.")
     parser.add_argument("--pilot", action="store_true", help="Up to 50 ranked + 50 seeded random hits per chunk.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max-records-per-query", type=positive,
@@ -363,11 +361,9 @@ def main(argv=None):
         if args.rebuild:
             print(json.dumps(rebuild(args.rebuild), indent=2))
             return 0
-        if args.context and not args.pilot:
-            raise ValueError("--context is available only with --pilot.")
         if args.resume and not args.output_dir:
             raise ValueError("--resume requires --output-dir.")
-        queries = compile_queries(args.set, args.context, args.topic)
+        queries = compile_queries(args.set)
         settings = dict(start_year=START_YEAR,
                         end_year=END_YEAR, pilot=args.pilot, seed=args.seed,
                         max_records=min(args.max_records_per_query or 100, 100)

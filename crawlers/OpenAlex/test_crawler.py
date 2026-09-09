@@ -6,7 +6,7 @@ from unittest.mock import patch
 import requests
 
 import main
-from queries import compile_queries, HAND
+from queries import compile_queries, CORE_QUERIES
 
 
 def work(identifier="W1", **kw):
@@ -38,27 +38,25 @@ class Tests(unittest.TestCase):
         self.settings = dict(start_year=2019, end_year=2026,
                              pilot=False, seed=42, max_records=None)
         self.q = [dict(id="q1", set_id="1", role="core", expression="haptics"),
-                  dict(id="q2", set_id="2", role="core", expression=HAND)]
+                  dict(id="q2", set_id="2", role="core", expression=CORE_QUERIES["2"])]
 
     def tearDown(self):
         self.temp.cleanup()
 
     def test_queries(self):
-        self.assertEqual(sum(len(q["topic_blocks"]) for q in compile_queries()), 15)
-        for q in compile_queries(selected="2"):
-            self.assertTrue(q["expression"].startswith(HAND + " AND ("))
-        self.assertIn(HAND, compile_queries(selected="2", topic="S2-03")[0]["expression"])
+        self.assertEqual([q["set_id"] for q in compile_queries()], ["1", "2"])
+        for selected in ("1", "2"):
+            self.assertEqual([q["set_id"] for q in compile_queries(selected)], [selected])
         with self.assertRaises(ValueError):
-            compile_queries(selected="2", context=True)
+            compile_queries("3")
 
     def test_current_query_scope_and_limits(self):
-        from queries import CORE_QUERIES
         for q in compile_queries():
             self.assertEqual(q["expression"], CORE_QUERIES[q["set_id"]])
             self.assertLessEqual(len(q["expression"]), 1400)
             self.assertEqual(q["search_scope"], "title_abstract")
-        self.assertTrue(CORE_QUERIES["2"].startswith(HAND + " AND ("))
-        self.assertIn('"dexterous hand"', HAND)
+        self.assertIn('"robot hand"', CORE_QUERIES["2"])
+        self.assertIn('"dexterous hand"', CORE_QUERIES["2"])
         self.assertNotIn('"tactile modeling"', CORE_QUERIES["2"])
 
     def test_scoped_api_and_sampling_keep_years(self):
