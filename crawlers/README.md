@@ -1,6 +1,6 @@
 # Crawlers
 
-Scripts used to retrieve candidate papers for the systematic review from two sources.
+Scripts used to retrieve candidate papers for the systematic review from three sources.
 
 ## GS_crawler - Google Scholar
 
@@ -110,3 +110,12 @@ article counts, and displays plots and filtered counts in the notebook itself.
 It does not write a separate processed output file.
 
 **Note:** The bundled `xplore/xploreapi.py` is a modified version of the official Python 2.7 SDK, ported to Python 3 and patched to fix Error 400 responses from the `maximumResults` and `startingResult` parameters.
+
+---
+
+## OpenAlex - PyAlex
+
+The [OpenAlex crawler](OpenAlex/README.md) retrieves two generative-haptics
+paper sets for 2019–2026, with required robot-hand phrases in Set 2. Supports
+versioned queries, ranked/random pilots, cursor pagination, resume, and two
+separate CSV exports. Start with a dry run or pilot as described in its README.
