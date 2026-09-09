@@ -55,8 +55,9 @@ class Tests(unittest.TestCase):
             self.assertEqual(q["expression"], CORE_QUERIES[q["set_id"]])
             self.assertLessEqual(len(q["expression"]), 1400)
             self.assertEqual(q["search_scope"], "title_abstract")
-        self.assertIn('"robot hand"', CORE_QUERIES["2"])
-        self.assertIn('"dexterous hand"', CORE_QUERIES["2"])
+        self.assertTrue(CORE_QUERIES["2"].startswith(
+            '( (robot OR robotic OR robotics OR "tactile sensor"'))
+        self.assertIn('"tactile prediction"', CORE_QUERIES["2"])
         self.assertNotIn('"tactile modeling"', CORE_QUERIES["2"])
 
     def test_scoped_api_and_sampling_keep_years(self):
