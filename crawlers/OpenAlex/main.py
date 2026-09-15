@@ -1,4 +1,4 @@
-"""Collect two reproducible OpenAlex paper sets using PyAlex.
+"""Collect reproducible OpenAlex paper sets using PyAlex.
 
 All searches cover 2019–2026. Set 1 supplies generative-haptics context;
 Set 2 requires robot/robotic hand phrases. Each set has a separate CSV export.
@@ -49,7 +49,8 @@ FIELDS = ["openalex_id", "doi", "title", "authors", "publication_year",
           "landing_page_url", "pdf_url", "is_oa", "is_retracted",
           "set_id", "query_ids", "retrieval_role",
           "sample_modes", "doi_duplicate_candidate"]
-FILES = {"1": "set_1_broad_context.csv", "2": "set_2_robot_haptics_bridge.csv"}
+FILES = {"1": "set_1_broad_context.csv", "2": "set_2_robot_haptics_bridge.csv",
+         "3": "set_3_foundation_agentic.csv"}
 
 
 def now():
@@ -102,7 +103,7 @@ def normalize(work):
 def rebuild(run):
     """Use only each query's current successful/capped attempt, never failed pages."""
     manifest = read_json(run / "manifest.json")
-    sets = {"1": {}, "2": {}}
+    sets = {set_id: {} for set_id in FILES}
     matches = []
     raw_hits = 0
     for query in manifest["queries"]:
@@ -140,7 +141,9 @@ def rebuild(run):
                for m in sorted(set(matches))])
     incomplete = [q["id"] for q in manifest["queries"] if q["status"] != "complete"]
     summary = dict(raw_hits=raw_hits, unique_counts={k: len(v) for k, v in sets.items()},
-                   overlap_count=len(set(sets["1"]) & set(sets["2"])),
+                   overlap_count=sum(
+                       sum(identifier in records for records in sets.values()) > 1
+                       for identifier in set().union(*sets.values())),
                    incomplete_queries=incomplete, partial=bool(incomplete),
                    zero_result_queries=[q["id"] for q in manifest["queries"]
                                         if q.get("reported_count") == 0],
@@ -347,7 +350,7 @@ def positive(value):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--set", choices=["all", "1", "2"], default="all")
+    parser.add_argument("--set", choices=["all", "1", "2", "3"], default="all")
     parser.add_argument("--pilot", action="store_true", help="Up to 50 ranked + 50 seeded random hits per chunk.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--max-records-per-query", type=positive,

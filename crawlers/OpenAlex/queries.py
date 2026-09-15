@@ -6,21 +6,95 @@ which sensing and interaction gaps generative haptics might address. They do
 not exhaustively cover biological hand function or robotic hardware/control;
 those comparisons also require separately collected baseline literature.
 
-``python main.py --set all`` submits both expressions as separate searches.
-``--set 1`` and ``--set 2`` select them individually; ``--pilot`` uses the same
+Set 3 mirrors the IEEE foundation-model/agentic-AI search for robotic hands
+and manipulation.
+
+``python main.py --set all`` submits all three expressions separately.
+``--set 1``, ``--set 2`` and ``--set 3`` select them individually; ``--pilot`` uses the same
 expressions with sampled retrieval. The client searches titles and abstracts
 and applies the publication-year range below. Results are exported separately,
-deduplicated by OpenAlex ID within each set; shared papers remain in both.
+deduplicated by OpenAlex ID within each set; shared papers remain in each matching set.
 
 These are candidate-retrieval sets, not final inclusion decisions. Screening
 must distinguish generated tactile outputs from ordinary recognition, control,
-sensor fabrication, and incidental mentions of touch. These expressions adopt
+sensor fabrication, and incidental mentions of touch. Sets 1 and 2 adopt
 the tighter candidates documented in query_review_20260909_194845_f77afc.md.
 Use a fresh run directory after changing queries; saved runs are not refiltered.
 """
 
 START_YEAR = 2019
 END_YEAR = 2026
+
+# SET 3 mirrors the IEEE crawler Boolean expression and terminology.
+EMBODIMENT_QUERY = (
+    '("robotic hand" OR "robot hand" OR "dexterous hand" OR '
+    '"anthropomorphic hand" OR "artificial hand" OR '
+    '"prosthetic hand" OR "bionic hand" OR '
+    '"multifingered hand" OR "multi-fingered hand" OR '
+    '"multifinger hand" OR "multi-finger hand" OR '
+    '"five-finger hand" OR "five-fingered hand" OR '
+    '"robotic palm" OR "robotic finger" OR '
+    '"soft robotic hand" OR "tendon-driven hand" OR '
+    '"multifingered gripper" OR "multi-fingered gripper" OR '
+    '"dexterous gripper" OR "hand morphology" OR '
+    '"finger synergy" OR "hand synergy" OR '
+    '"dexterous grasp" OR "multifinger grasp" OR '
+    '"multi-finger grasp")'
+)
+
+MANIPULATION_QUERY = (
+    '(grasping OR "grasp generation" OR "functional grasping" OR '
+    '"task-oriented grasping" OR "dexterous manipulation" OR '
+    '"in-hand manipulation" OR "in hand manipulation" OR '
+    '"object manipulation" OR "hand-object interaction" OR '
+    '"finger control" OR "hand control")'
+)
+
+FOUNDATION_MODEL_QUERY = (
+    '("foundation model" OR "foundation models" OR '
+    '"robot foundation model" OR "robotics foundation model" OR '
+    '"multimodal foundation model" OR '
+    '"vision foundation model" OR "visual foundation model" OR '
+    '"promptable foundation model" OR '
+    '"large language model" OR LLM OR '
+    '"vision-language model" OR "visual language model" OR VLM OR '
+    '"vision-language-action model" OR "vision-language-action" OR '
+    '"vision language action model" OR VLA OR '
+    '"multimodal language model" OR '
+    '"large multimodal model" OR '
+    '"multimodal large language model" OR MLLM OR '
+    '"vision-language policy" OR "multimodal policy" OR '
+    '"generalist policy" OR "generalist robot policy" OR '
+    '"general-purpose robot policy" OR '
+    '"language-conditioned policy" OR '
+    '"language-conditioned manipulation" OR '
+    '"open-vocabulary manipulation" OR '
+    '"tactile-language-action" OR '
+    '"vision-language-tactile-action" OR '
+    '"latent action representation")'
+)
+
+AGENTIC_QUERY = (
+    '("agentic AI" OR '
+    '"LLM-based planning" OR "LLM planner" OR '
+    '"language-model-based planning" OR '
+    '"VLM-based planning" OR "VLM planner" OR '
+    '"vision-language planning" OR "multimodal planner" OR '
+    '"language-guided planning" OR '
+    '"language-guided task planning" OR '
+    '"open-world planning" OR "task decomposition" OR '
+    '"chain-of-thought" OR "robot chain-of-thought" OR '
+    '"self-evaluation" OR "self-reflection" OR '
+    '"reflection-based planning" OR '
+    '"closed-loop reasoning" OR '
+    '"autonomous reasoning" OR "reasoning-based manipulation" OR '
+    '"failure recovery" OR "recovery mechanism")'
+)
+
+FOUNDATION_AGENTIC_QUERY = (
+    f"(({EMBODIMENT_QUERY}) OR ({MANIPULATION_QUERY})) AND "
+    f"(({FOUNDATION_MODEL_QUERY}) OR ({AGENTIC_QUERY}))"
+)
 
 CORE_QUERIES = {
     # SET 1 — Broad generative-haptics context for virtual/physical interaction.
@@ -74,13 +148,14 @@ CORE_QUERIES = {
         '"world model") OR (tactile AND ("super-resolution" OR "afferent spike generation" OR '
         '"spike train generation")) ) )'
     ),
+    "3": FOUNDATION_AGENTIC_QUERY,
 }
 
 
 def compile_queries(selected="all"):
-    """Select one or both core searches without modifying their expressions."""
-    if selected not in ("all", "1", "2"):
-        raise ValueError("Unknown set; choose all, 1, or 2.")
+    """Select one or all core searches without modifying their expressions."""
+    if selected != "all" and selected not in CORE_QUERIES:
+        raise ValueError("Unknown set; choose all, 1, 2, or 3.")
     return [dict(id=f"S{set_id}-core-1", set_id=set_id, role="core",
                  expression=CORE_QUERIES[set_id], search_scope="title_abstract")
-            for set_id in ("1", "2") if selected in ("all", set_id)]
+            for set_id in CORE_QUERIES if selected in ("all", set_id)]

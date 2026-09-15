@@ -1,3 +1,4 @@
+import ast
 import csv
 import tempfile
 import unittest
@@ -44,21 +45,48 @@ class Tests(unittest.TestCase):
         self.temp.cleanup()
 
     def test_queries(self):
-        self.assertEqual([q["set_id"] for q in compile_queries()], ["1", "2"])
-        for selected in ("1", "2"):
+        self.assertEqual([q["set_id"] for q in compile_queries()], ["1", "2", "3"])
+        for selected in ("1", "2", "3"):
             self.assertEqual([q["set_id"] for q in compile_queries(selected)], [selected])
         with self.assertRaises(ValueError):
-            compile_queries("3")
+            compile_queries("4")
 
     def test_current_query_scope_and_limits(self):
         for q in compile_queries():
             self.assertEqual(q["expression"], CORE_QUERIES[q["set_id"]])
-            self.assertLessEqual(len(q["expression"]), 1400)
+            if q["set_id"] in ("1", "2"):
+                self.assertLessEqual(len(q["expression"]), 1400)
             self.assertEqual(q["search_scope"], "title_abstract")
         self.assertTrue(CORE_QUERIES["2"].startswith(
             '( (robot OR robotic OR robotics OR "tactile sensor"'))
         self.assertIn('"tactile prediction"', CORE_QUERIES["2"])
         self.assertNotIn('"tactile modeling"', CORE_QUERIES["2"])
+
+    def test_ieee_query_parity(self):
+        source = Path(__file__).resolve().parents[1] / "IEEE-Xplore-API_p3" / "main.py"
+        tree = ast.parse(source.read_text())
+        names = {"EMBODIMENT_QUERY", "MANIPULATION_QUERY", "FOUNDATION_MODEL_QUERY",
+                 "AGENTIC_QUERY", "QUERY", "START_YEAR", "END_YEAR"}
+        assignments = [node for node in tree.body if isinstance(node, ast.Assign)
+                       and any(isinstance(t, ast.Name) and t.id in names for t in node.targets)]
+        namespace = {}
+        exec(compile(ast.Module(body=assignments, type_ignores=[]), str(source), "exec"), namespace)
+        self.assertEqual(CORE_QUERIES["3"], namespace["QUERY"])
+        self.assertEqual(main.START_YEAR, int(namespace["START_YEAR"]))
+        self.assertEqual(main.END_YEAR, int(namespace["END_YEAR"]))
+
+    def test_set_three_export_and_overlap(self):
+        queries = compile_queries("1") + compile_queries("3")
+        fake = Fake([page([work()]), page([work(), work("W3")])])
+        self.assertEqual(main.crawl(self.run, self.settings, queries, fake), 0)
+        summary = main.rebuild(self.run)
+        self.assertEqual(summary["unique_counts"], {"1": 1, "2": 0, "3": 2})
+        self.assertEqual(summary["overlap_count"], 1)
+        with (self.run / main.FILES["3"]).open(newline="") as f:
+            rows = list(csv.DictReader(f))
+        self.assertEqual(len(rows), 2)
+        self.assertTrue(all(row["set_id"] == "3" for row in rows))
+        self.assertTrue(all(row["query_ids"] == "S3-core-1" for row in rows))
 
     def test_scoped_api_and_sampling_keep_years(self):
         response = requests.Response()
@@ -89,7 +117,7 @@ class Tests(unittest.TestCase):
         fake = Fake([page([work()], "next"), page([work(), work("W2")]), page([work()])])
         self.assertEqual(main.crawl(self.run, self.settings, self.q, fake), 0)
         summary = main.rebuild(self.run)
-        self.assertEqual(summary["unique_counts"], {"1": 2, "2": 1})
+        self.assertEqual(summary["unique_counts"], {"1": 2, "2": 1, "3": 0})
         self.assertEqual(summary["overlap_count"], 1)
         self.assertFalse(summary["partial"])
         self.assertFalse((self.run / "papers_union.csv").exists())
